@@ -19,5 +19,8 @@
   "dependencies": {
     "@types/nearley": "^2.11.0",
     "nearley": "^2.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.18"
   }
 }

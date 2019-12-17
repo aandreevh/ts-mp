@@ -6,11 +6,14 @@ function tag(t,v){
 
 module.exports={
     NUM: 
-    utils.transform((dat) => 
+    utils.transform(dat => 
     dat[0].reduce((nv,cur) => 10*nv+(+cur),0)),
+    STR : utils.transform(dat => 
+        dat[0].reduce((nv,cur) => nv+cur,"")),
+
     TAG: utils.pipe(
-        utils.filter(1,2),
-        utils.map(utils.unpack(),0),
-        utils.transform(d=> tag(d[0],d[1])),
+        utils.unpack(),
+        utils.filter(2,5),
+        utils.transform(([n,v]) => tag(n[0],v))
     ),
 };

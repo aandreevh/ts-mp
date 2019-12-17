@@ -1,10 +1,13 @@
 {
-    "filewatcher.commands": [
-        {
-            "match": "\\.ne*",
-            "isAsync": true,
-            "cmd": "nearleyc ${file} -o $(echo -n ${file} | sed 's/\\.ne$/\\.js/')",
-            "event": "onFileChange"
-        }        
-    ]
+    "appulateinc.filewatcher":{
+        "commands": [
+            {
+                "match": "\\.ne*",
+                "isAsync": true,
+                "cmd": "nearleyc \"${file}\" -o \"$(echo -n ${file} | sed 's/\\.ne$/\\.js/')\"",
+                "event": "onFileChange"
+            }        
+        ]
+    }
+    
 }

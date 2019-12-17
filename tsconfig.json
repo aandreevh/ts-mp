@@ -5,14 +5,13 @@
         "removeComments": true,                                                                                                                       
         "preserveConstEnums": true,                                                                                                                   
         "outDir": "build",                                                                                                                            
-        "sourceMap": true,
-                                                                                                                                
+        "sourceMap": true                                                                                                   
     },                                                                                                                                                
     "include": [                                                                                                                                      
-        "src/**/*"                                                                                                                                    
+        "src/**/*"                                                                                                                            
     ],                                                                                                                                                
     "exclude": [                                                                                                                                      
         "node_modules",                                                                                                                               
         "**/*.spec.ts"                                                                                                                                
-    ]                                                                                                                                                 
+    ]                                                                                                                                         
 }  
