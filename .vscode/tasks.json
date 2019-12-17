@@ -1,0 +1,25 @@
+{                                                                                                                                                     
+    "tasks": [    
+        {
+            "label": "starter",
+            "type": "shell",
+            "command": "echo Started",
+            "presentation": {
+                "reveal": "never",
+            },
+            "dependsOn" : ["tsb"]
+        },                                                                                                                             
+        {                                                                                                                                             
+            "label": "tsb",                                                                                                                           
+            "type": "shell",                                                                                                                          
+            "command": "tsc -p tsconfig.json",                                                                                                        
+            "group": {                                                                                                                                
+                "kind": "build",                                                                                                                      
+                "isDefault": true                                                                                                                     
+            }, 
+            "presentation": {
+                "reveal": "never"
+            }                                                                                                                                    
+        }                                                                                                                                             
+    ]                                                                                                                                                 
+}  

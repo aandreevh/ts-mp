@@ -1,0 +1,23 @@
+{
+  "name": "ts-mp",
+  "version": "1.0.0",
+  "description": "English message parser",
+  "main": "./src/main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aandreevh/ts-mp.git"
+  },
+  "author": "hykar",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/aandreevh/ts-mp/issues"
+  },
+  "homepage": "https://github.com/aandreevh/ts-mp#readme",
+  "dependencies": {
+    "@types/nearley": "^2.11.0",
+    "nearley": "^2.19.0"
+  }
+}
