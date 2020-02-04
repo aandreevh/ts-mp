@@ -1,5 +1,7 @@
 const utils = require("../utils/gutils");
 
+console.log(utils);
+
 function tag(t,v){
     return {t,v};
 }
@@ -24,6 +26,9 @@ module.exports={
     TAG_NB: utils.pipe(
         utils.unpack(),
         utils.filter(2,5),
-        utils.transform(([n,_]) => n[0])
+        utils.transform(([n,b]) => {
+           return {type: n[0],id:b};
+        })
     ),
+    utils
 };

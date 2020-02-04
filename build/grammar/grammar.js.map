@@ -1,0 +1,1 @@
+{"version":3,"file":"grammar.js","sourceRoot":"","sources":["../../src/grammar/grammar.ts"],"names":[],"mappings":";;AAAA,mCAAsC;AAEtC;IAEI,aAAoB,IAAa;QAAb,SAAI,GAAJ,IAAI,CAAS;QAC7B,IAAI,CAAC,MAAM,GAAG,IAAI,gBAAM,CAAC,iBAAO,CAAC,YAAY,CAAC,OAAO,CAAC,IAAI,CAAC,CAAC,CAAC,CAAC;IAClE,CAAC;IAGL,UAAC;AAAD,CAAC,AAPD,IAOC;AAPY,kBAAG"}

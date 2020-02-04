@@ -7,7 +7,7 @@ function id(x) { return x[0]; }
 var grammar = {
     Lexer: undefined,
     ParserRules: [
-    {"name": "S", "symbols": ["Verb"], "postprocess": g.UNPK},
+    {"name": "S", "symbols": ["NP", "VP"]},
     {"name": "Num$ebnf$1", "symbols": [/[0-9]/]},
     {"name": "Num$ebnf$1", "symbols": ["Num$ebnf$1", /[0-9]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "Num", "symbols": ["Num$ebnf$1"], "postprocess": g.NUM},

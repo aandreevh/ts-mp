@@ -8,7 +8,7 @@
 Tag[X] -> ("["  (TT "|"):? $X ("|" TT):? "|" Num "]") {%g.TAG_NB%}
 
 
-S -> Verb {%g.UNPK%}
+S -> NP VP 
 
 Num -> [0-9]:+ {%g.NUM%}
 Str -> [a-zA-Z]:+ {%g.STR%}
@@ -18,7 +18,7 @@ NP -> Pronoun
  | PN
  | Nominal
 
-Nominal -> Determiner:? ADD:? Noun Nominal 
+Nominal -> Determiner:? ADD:? Noun Nominal
  |  Nominal RelClause VP
  | Determiner:? ADD:? Noun
  | Nominal PP

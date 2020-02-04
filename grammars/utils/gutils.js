@@ -1,3 +1,48 @@
+var id = () => data => {
+    return data;
+};
+
+
+var log = () =>  (data)=> {
+    console.log(JSON.stringify(data))
+    return data;
+};
+
+var pipe = (a,...func) => (data)=>{
+    if(a=== undefined) return data;
+    return pipe(...func)(a(data));
+};
+
+var parseInt = (id) => (data) =>{
+    data[id] = data[id].reduce((n,c) => 10*n+  +c,0);
+    return data;
+};
+
+function inD(data,index){
+    return data.includes(index);
+}
+
+var filter = (...ids) => (data)=>{
+    return data.filter((_,id) =>inD(ids,id));
+};
+
+var unpack = (id=0) => (data)=>{
+    return data[id];
+};
+
+var map = (fn,...ids) => (data)=>{
+    return data.map((v,id)=>{
+        if(inD(ids,id)){
+            return fn(v)
+        }
+        return v
+    })
+};
+
+var transform = (cb) => (data) =>{
+    return cb(data);
+};
+
 module.exports = {
     id,
     log,
@@ -7,48 +52,4 @@ module.exports = {
     filter,
     map,
     transform
-    }
-
-function id (){return (data)=> {
-    return data;
-}}
-
-
-function log (){return (data)=> {
-    console.log(JSON.stringify(data))
-    return data;
-}}
-
-function pipe(a,...func) {return  (data)=>{
-    if(a=== undefined) return data;
-    return pipe(...func)(a(data));
-}}
-
-function parseInt(id) {return (data) =>{
-    data[id] = data[id].reduce((n,c) => 10*n+  +c,0);
-    return data;
-}}
-
-function inD(data,index){
-    return data.includes(index);
 }
-
-function filter(...ids) {return (data)=>{
-    return data.filter((_,id) =>inD(ids,id));
-}}
-
-function unpack(id=0) {return (data)=>{
-    return data[id];
-}}
-function map(fn,...ids) {return (data)=>{
-    return data.map((v,id)=>{
-        if(inD(ids,id)){
-            return fn(v)
-        }
-        return v
-    })
-}}
-
-function transform(cb) { return (data)=>{
-    return cb(data)
-}}
