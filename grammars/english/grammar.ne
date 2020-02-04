@@ -5,10 +5,11 @@
 
 
 
-Tag[X] -> ("["  (TT "|"):? $X ("|" TT):? "|" Num "]") {%g.TAG%}
+Tag[X] -> ("["  (TT "|"):? $X ("|" TT):? "|" Num "]") {%g.TAG_NB%}
 
 
-S -> Verb
+S -> Verb {%g.UNPK%}
+
 Num -> [0-9]:+ {%g.NUM%}
 Str -> [a-zA-Z]:+ {%g.STR%}
 TT -> Str "|" TT  | Str

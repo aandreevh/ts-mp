@@ -5,9 +5,13 @@ function tag(t,v){
 }
 
 module.exports={
+
+    UNPK: utils.unpack(),
+
     NUM: 
     utils.transform(dat => 
     dat[0].reduce((nv,cur) => 10*nv+(+cur),0)),
+
     STR : utils.transform(dat => 
         dat[0].reduce((nv,cur) => nv+cur,"")),
 
@@ -15,5 +19,11 @@ module.exports={
         utils.unpack(),
         utils.filter(2,5),
         utils.transform(([n,v]) => tag(n[0],v))
+    ),
+
+    TAG_NB: utils.pipe(
+        utils.unpack(),
+        utils.filter(2,5),
+        utils.transform(([n,_]) => n[0])
     ),
 };
