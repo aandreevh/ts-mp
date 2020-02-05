@@ -6,6 +6,10 @@ var CFG = (function () {
         this.file = file;
         this.parser = new nearley_1.Parser(nearley_1.Grammar.fromCompiled(require(file)));
     }
+    CFG.prototype.parse = function (data) {
+        this.parser.feed(data);
+        return this.parser.results;
+    };
     return CFG;
 }());
 exports.CFG = CFG;

@@ -8,7 +8,11 @@
 Tag[X] -> ("["  (TT "|"):? $X ("|" TT):? "|" Num "]") {%g.TAG_NB%}
 
 
+<<<<<<< Updated upstream
 S -> NP VP 
+=======
+S -> Verb
+>>>>>>> Stashed changes
 
 Num -> [0-9]:+ {%g.NUM%}
 Str -> [a-zA-Z]:+ {%g.STR%}

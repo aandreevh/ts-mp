@@ -1,8 +1,10 @@
 "use strict";
 exports.__esModule = true;
-var nearley = require("nearley");
-var grammar = require("../grammars/english/grammar.js");
-var parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
-parser.feed("[pr|0][v|0][pr|0][det|0][n|0]");
-console.log(JSON.stringify(parser.results[0]));
+
+var grammar_1 = require("./grammar");
+var tree_1 = require("./tree");
+var cfg = new grammar_1.CFG("../grammars/english/grammar.js");
+console.log(JSON.stringify(cfg.parse("[v|n|1]")));
+var n = tree_1.Node.fromBasicArray([1]);
+console.log(n.toString());
 //# sourceMappingURL=main.js.map

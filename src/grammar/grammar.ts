@@ -7,4 +7,8 @@ export class CFG{
     }
 
     
+    parse(data : string){
+        this.parser.feed(data);
+       return this.parser.results;
+    }
 }
