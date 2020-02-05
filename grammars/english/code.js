@@ -1,14 +1,7 @@
 const utils = require("../utils/gutils");
 
-<<<<<<< Updated upstream
-console.log(utils);
-
-function tag(t,v){
-    return {t,v};
-=======
 function tag(t,id){
     return {t,id};
->>>>>>> Stashed changes
 }
 
 module.exports={

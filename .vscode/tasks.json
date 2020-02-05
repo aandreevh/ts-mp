@@ -8,10 +8,10 @@
             "presentation": {
                 "reveal": "never",
             },
-            "dependsOn" : ["tsb"]
+            "dependsOn" : ["tsb","symlink-grammar"]
         },                                                                                                                             
         {                                                                                                                                             
-            "label": "tsb",                                                                                                                           
+            "label": "tsb",                                                                                                                     
             "type": "shell",                                                                                                                          
             "command": "tsc -p ${workspaceFolder}",                                                                                                        
             "group": {                                                                                                                                
@@ -21,6 +21,18 @@
             "presentation": {
                 "reveal": "never"
             }                                                                                                                                    
-        }                                                                                                                                             
+        },
+        {
+            "label": "symlink-grammar",
+            "type": "shell",
+            "command": "ln -sfn '../grammars/english' ${workspaceFolder}/build/grm",                                                                                                        
+            "group": {                                                                                                                                
+                "kind": "build",                                                                                                                      
+                "isDefault": true                                                                                                                     
+            }, 
+            "presentation": {
+                "reveal": "never"
+            }  
+        }                                                                                                                                           
     ]                                                                                                                                                 
 }  
