@@ -13,7 +13,7 @@
         {                                                                                                                                             
             "label": "tsb",                                                                                                                     
             "type": "shell",                                                                                                                          
-            "command": "tsc -p ${workspaceFolder}",                                                                                                        
+            "command": "[ -d build] || mkdir build; tsc -p ${workspaceFolder}",                                                                                                        
             "group": {                                                                                                                                
                 "kind": "build",                                                                                                                      
                 "isDefault": true                                                                                                                     

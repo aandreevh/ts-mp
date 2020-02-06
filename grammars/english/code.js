@@ -1,8 +1,26 @@
 const utils = require("../utils/gutils");
+const moo = require("moo");
 
 function tag(t,id){
     return {t,id};
 }
+
+const lexer = moo.compile({
+    space: / +/,
+    integer: {match: /[0-9]+/, value: s => +s },
+    string:  {
+        match: /"(?:(?:\\\\)|(?:\\[a-z])|[^"\\]|(?:\\"))*"|'[^']*'/,
+        value: s => {
+            if(s.startsWith("\'")){
+                return s.substring(1,s.length-1); 
+            }else{
+                return JSON.parse(s); 
+            }
+        }},
+    
+    keyword: ["not","and","or","but"],
+    member: /(?:@[^ ]+)|me|them|all|everyone/,
+    });
 
 module.exports={
 
@@ -28,5 +46,6 @@ module.exports={
            return {type: n[0],id:b};
         })
     ),
-    utils
+    utils,
+    lexer
 };
