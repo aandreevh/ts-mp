@@ -14,7 +14,8 @@ Group1 -> Group1 %space "or" (%space "not"):? %space Group2
  | Group2
 Group2 -> Group3 %space "and" (%space "not"):? %space Group2
  | Group3
-Group3 -> Group3 %space %member | %member
+Group3 -> Group3 %space GroupD | GroupD
+GroupD -> %member
 
 
 S1 -> S Conjunction S2 | S2
