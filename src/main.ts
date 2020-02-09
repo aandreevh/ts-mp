@@ -1,22 +1,28 @@
-import {CFG} from "./grammar/grammar"
-import {Node} from "./tree"
+import {CFG} from "./core/grammar/grammar"
+import {AdvancedCFGBuilder} from './core/grammar/advanced'
+import {FunctionDescriptor} from './core/runtime/runtime';
+import {CFGContextBuilder} from './core/runtime/builder';
 //const cfg : CFG = new CFG(__dirname+'/grm/grammar.js');
 //console.log(JSON.stringify(cfg.parse("all but me @anna")));
 
+console.log(__dirname+'/grm/grammar.js');
 
-const b = new CFG.LexerBuilder();
+const advancedBuider = new AdvancedCFGBuilder();
 
-const lex = b.add('space',/ +/)
-.add('integer',/[0-9]+/).addAll({q:['a'], p:['a']}).build();
+advancedBuider.addGrammarFromFile(__dirname+'/grm');
+advancedBuider.lexerBuilder.addIdentityToken();
 
-console.log();
+const builder = new CFGContextBuilder(advancedBuider);
+builder.addFunctionDescriptor(FunctionDescriptor
+    .parseFunction('S','send +%member %string',(members,message)=>{
+        console.log(JSON.stringify(members));
+    }
+),{type:'space'});
 
-const rules = (new CFG.GrammarBuilder())
-.add({name: 'S',symbols:[{tag:'+', symbols:[{type: 'q'}]}],postprocessor: x=>x[0]}).build();
-
-console.log(JSON.stringify(rules));
-
-const cfg = new CFG.CFG(lex,rules,'S');
+const cfg = builder.build().build();
 
 
-console.log(JSON.stringify(cfg.parse('a')));
+console.log(JSON.stringify(advancedBuider.grammarBuilder));
+console.log("");
+console.log(JSON.stringify(cfg.parse('send @a "sadasdsa"')));
+
