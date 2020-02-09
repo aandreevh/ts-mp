@@ -22,8 +22,8 @@ export namespace Postprocess{
         return data[0];
     }
 
-    export const  idcon = () : Postprocessor =>(data: any)=>{
-        return data[0].concat([data[1]]);
+    export const  idcon = () : Postprocessor =>([f,...data]: any)=>{
+        return f.concat(data);
     }
 
     export const dropArr = (...indexes) : Postprocessor =>(data : any)=>{
@@ -37,6 +37,17 @@ export namespace Postprocess{
         indexes.forEach((el) =>  narr[narr.length] = data[el]);
 
         return narr;
+    }
+
+        
+    export const removeOdd = (indexes) : Postprocessor =>(data : any)=>{
+
+        return data.map((el,index)=>{
+            if(indexes.find(x => x==index) !=null){
+             
+                return el.filter((_,i)=> i%2==0);
+            }else return el;
+        });
     }
 
     export const valueConvetion  = (f : FunctionalPostprocessor) : Postprocessor =>(data: any)=>{

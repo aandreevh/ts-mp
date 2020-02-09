@@ -14,15 +14,18 @@ advancedBuider.lexerBuilder.addIdentityToken();
 
 const builder = new CFGContextBuilder(advancedBuider);
 builder.addFunctionDescriptor(FunctionDescriptor
-    .parseFunction('S','send +%member %string',(members,message)=>{
-        console.log(JSON.stringify(members));
+    .parseFunction('S','send +%member %string',(members : string[],message : string)=>{
+        return {members,message};
     }
-),{type:'space'});
+)).addFunctionDescriptor('Group','$Group and $Group',(u,v)=>{
+    console.log(u,v);
+    
+});
 
 const cfg = builder.build().build();
 
 
 console.log(JSON.stringify(advancedBuider.grammarBuilder));
 console.log("");
-console.log(JSON.stringify(cfg.parse('send @a "sadasdsa"')));
+console.log(JSON.stringify(cfg.parse('send everyone "sadasdsa"')[0]));
 

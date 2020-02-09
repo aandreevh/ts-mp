@@ -7,8 +7,8 @@ export class CFGContextBuilder{
     constructor(public cfgBuilder : AdvancedCFGBuilder =  new AdvancedCFGBuilder()) {}
 
 
-    addFunctionDescriptor(descriptor : FunctionDescriptor,spacing: GrammarSymbol): CFGContextBuilder{
-        const mapIndex : number[]=[];
+    addFunctionDescriptor(descriptor : FunctionDescriptor,spacing: GrammarSymbol = {type:'space'}): CFGContextBuilder{
+        const mapIndex : number[]=[],longIndex :number[]=[];
         const symbols : GrammarSymbol[]=[];
         let counter =0;
         descriptor.structure.forEach((el,index) => {
@@ -41,10 +41,11 @@ export class CFGContextBuilder{
                 break;
                 case '*':
                         symbols.push({tag: el.tag, symbols:[symVal,spacing]});
+                        longIndex.push(counter);
                     break;
                 case '+':
                         symbols.push({tag: el.tag, symbols:[symVal,spacing]});
-                   
+                        longIndex.push(counter);
                 break;
                 default:
                    
@@ -59,7 +60,8 @@ export class CFGContextBuilder{
         this.cfgBuilder.grammarBuilder
         .add({name:descriptor.returnType,
             symbols:symbols,
-            postprocessor:Postprocess.pipe(
+            postprocessor:Postprocess.pipe(   
+                Postprocess.removeOdd(longIndex),
                 Postprocess.filter(...mapIndex),
                 Postprocess.valueConvetion(descriptor.handler)
             )});
@@ -67,6 +69,9 @@ export class CFGContextBuilder{
 
         return this;
     }
+
+
+    addUnparsed()
 
 
     build() : AdvancedCFGBuilder{
