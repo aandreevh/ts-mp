@@ -41,7 +41,7 @@ export namespace Postprocess{
 
         
     export const removeOdd = (indexes) : Postprocessor =>(data : any)=>{
-
+      
         return data.map((el,index)=>{
             if(indexes.find(x => x==index) !=null){
              

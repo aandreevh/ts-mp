@@ -1,7 +1,28 @@
-import {FunctionDescriptor} from './runtime'
+import {FunctionDescriptor,FuncBaseDescription} from './runtime'
 import {AdvancedCFGBuilder} from '../grammar/advanced'
-import { GrammarSymbol,BasicGrammarSymbol } from '../grammar/grammar';
+import {GrammarSymbol,BasicGrammarSymbol,CFG} from '../grammar/grammar';
 import {Postprocess} from '../grammar/processor'
+
+
+
+export class ContextEvaluator{
+
+
+    constructor(public cfg :CFG){}
+
+
+    eval(data:string){
+        try{
+            const result = this.cfg.parse(data);
+            return result[0];
+        }catch(e){
+            console.log(JSON.stringify(e));
+        }
+   
+
+    }
+}
+
 export class CFGContextBuilder{
 
     constructor(public cfgBuilder : AdvancedCFGBuilder =  new AdvancedCFGBuilder()) {}
@@ -16,35 +37,39 @@ export class CFGContextBuilder{
             switch(el.type){
                 case '%':
                         symVal= {type: el.attribute};
+                        mapIndex.push(counter);
                 break;
                 case '$':
                         symVal = el.attribute;
-                    
+                        mapIndex.push(counter);
                         break;
                 default:
                         symVal = {literal: el.attribute};
                 break;
             }
-            if(el.type != '')mapIndex.push(counter);
+
             switch(el.tag){
                 case '':
                         symbols.push(symVal);
                         if(index != descriptor.structure.length-1){
                             symbols.push(spacing);
-                            counter++;
+                            counter++;    
                         }
-                        
                 break;
                 case '?':
+                    if(index != descriptor.structure.length-1){
                         symbols.push({tag: el.tag, symbols: [symVal,spacing]}); 
-              
+                    }else{
+                        symbols.push({tag: el.tag, symbols: [symVal]}); 
+                    }
+                        
                 break;
                 case '*':
-                        symbols.push({tag: el.tag, symbols:[symVal,spacing]});
+                        symbols.push({tag: el.tag, symbols:[symVal],value:spacing});
                         longIndex.push(counter);
                     break;
                 case '+':
-                        symbols.push({tag: el.tag, symbols:[symVal,spacing]});
+                        symbols.push({tag: el.tag, symbols:[symVal],value:spacing});
                         longIndex.push(counter);
                 break;
                 default:
@@ -70,11 +95,31 @@ export class CFGContextBuilder{
         return this;
     }
 
+    addDescription(returnValue : string,descriptor : string,handler : (arg0 : any) => any,spacing: GrammarSymbol = {type:'space'}) :CFGContextBuilder{
+        this.addFunctionDescriptor(FunctionDescriptor.parseFunction(returnValue,descriptor,handler),spacing);
+        return this;
+    }
 
-    addUnparsed()
+    
+
+    addAllDescription(x : {[arg:string] : FuncBaseDescription | FuncBaseDescription[]},spacing: GrammarSymbol = {type:'space'}):CFGContextBuilder{
+    
+        for(const returnValue in x){
+            const val =  x[returnValue];
+            if(Array.isArray(val)){
+                for(const dat of val){
+                    this.addDescription(returnValue,dat.descriptor,dat.handler);
+                }
+            }else{
+                this.addDescription(returnValue,val.descriptor,val.handler,spacing);
+            }
+             }
+        return this;
+    }
 
 
-    build() : AdvancedCFGBuilder{
-        return this.cfgBuilder;
+
+    build() : ContextEvaluator{
+        return new ContextEvaluator(this.cfgBuilder.build());
     }
 }

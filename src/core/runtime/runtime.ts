@@ -1,11 +1,12 @@
 
 
+export interface FuncBaseDescription {descriptor : string,handler : (...arg0 : any) => any};
+
 export interface FunctionAttribute{
     tag: string
     type : string;
     attribute : string;
 }
-
 
 
 export class FunctionDescriptor{

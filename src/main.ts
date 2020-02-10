@@ -1,11 +1,7 @@
 import {CFG} from "./core/grammar/grammar"
 import {AdvancedCFGBuilder} from './core/grammar/advanced'
-import {FunctionDescriptor} from './core/runtime/runtime';
-import {CFGContextBuilder} from './core/runtime/builder';
-//const cfg : CFG = new CFG(__dirname+'/grm/grammar.js');
-//console.log(JSON.stringify(cfg.parse("all but me @anna")));
-
-console.log(__dirname+'/grm/grammar.js');
+import {CFGContextBuilder,ContextEvaluator} from './core/runtime/builder';
+import {Postprocess} from './core/grammar/processor';
 
 const advancedBuider = new AdvancedCFGBuilder();
 
@@ -13,19 +9,35 @@ advancedBuider.addGrammarFromFile(__dirname+'/grm');
 advancedBuider.lexerBuilder.addIdentityToken();
 
 const builder = new CFGContextBuilder(advancedBuider);
-builder.addFunctionDescriptor(FunctionDescriptor
-    .parseFunction('S','send +%member %string',(members : string[],message : string)=>{
-        return {members,message};
-    }
-)).addFunctionDescriptor('Group','$Group and $Group',(u,v)=>{
-    console.log(u,v);
-    
-});
 
-const cfg = builder.build().build();
+const evaluator : ContextEvaluator = builder.addAllDescription({
+    'S' :{
+      descriptor : 'send ?$Group %string',
+      handler : (u,v) =>[{group: u},{message: v}]
+    },
+    'Group':[
+     
+        {
+            descriptor: '$Group and $Group',
+            handler: (u,v) => u.concat(v)
+        },
+        {
+            descriptor: '$Group or $Group',
+            handler: (u,v) => [u,v]
+        },
+        {
+            descriptor: '+%member',
+            handler: Postprocess.id()
+        },
+        {
+            descriptor: 'not $Group',
+            handler: (u) => ["!",u]
+        },
+    ]
+}).build();
 
 
-console.log(JSON.stringify(advancedBuider.grammarBuilder));
-console.log("");
-console.log(JSON.stringify(cfg.parse('send everyone "sadasdsa"')[0]));
+console.log(`${JSON.stringify(advancedBuider.grammarBuilder)}\n`);
+
+console.log(JSON.stringify(evaluator.eval('send @andrey @georgy and @yqavor "hello!"')));
 

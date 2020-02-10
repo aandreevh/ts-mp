@@ -49,14 +49,29 @@ import {Postprocessor,Postprocess} from './processor'
 
         '*': function(prule:ParserRule,ptag :AdvancedGrammarSymbol){
             const uuid = this.generateUniqueId();
-            this.addRule1(uuid,[]);
-            this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: Postprocess.idcon()});
+         
+            if(ptag.value){ //spacing symbol
+                const uuid2 = this.generateUniqueId();
+                this.addRule1(uuid,[]);
+                this.addRule1(uuid,[uuid2],Postprocess.idi());
+                this.add({name:uuid2,symbols: [uuid,ptag.value,...ptag.symbols],postprocessor: Postprocess.idcon()});
+                this.add({name:uuid2,symbols:ptag.symbols});
+            }else{
+                this.addRule1(uuid,[]);
+                this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: Postprocess.idcon()});
+            }
             prule.symbols.push(uuid);
         },
         '+': function(prule:ParserRule,ptag :AdvancedGrammarSymbol){
             const uuid = this.generateUniqueId();
-            this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: Postprocess.idcon()});
-            this.add({name:uuid,symbols:ptag.symbols});
+            if(ptag.value){ //spacing symbol
+                this.add({name:uuid,symbols: [uuid,ptag.value,...ptag.symbols],postprocessor: Postprocess.idcon()});
+                this.add({name:uuid,symbols:ptag.symbols});
+            }else{
+                this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: Postprocess.idcon()});
+                this.add({name:uuid,symbols:ptag.symbols});
+            }
+            
             prule.symbols.push(uuid);
         }
     }
@@ -135,4 +150,6 @@ import {Postprocessor,Postprocess} from './processor'
             
            return this.parser.results;
         }
+
+
     }
