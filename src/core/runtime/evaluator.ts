@@ -5,19 +5,19 @@ export type LazyPostprocessor =(... arg0 :any[]) => any
 export class Evaluateable<T>{
     constructor(public value : any[],public handler :LazyPostprocessor ){}
 
-    eval() : T{
-        return this.handler(...this.value);
+    eval(...args: any[]) : T{
+        return this.handler(...[...this.value,...args]);
     }
 }
 
 
 
-export function evaluate<T>(x : any){
+export function evaluate<T>(x : any,...args: any[]){
     if(x instanceof Evaluateable){
-        return x.eval();
+        return x.eval(...args);
      }else{
          if(Array.isArray(x)){
-             return x.map(y=> evaluate<any>(y));
+             return x.map(y=> evaluate<any>(y,...args));
          }else{
             return x;
          }
