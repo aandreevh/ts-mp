@@ -10,5 +10,17 @@ module.exports = {
                 return JSON.parse(s); 
             }
         }},
-    member: /(?:@[^ ]+)|me|everyone/,
+    member: {
+        match : /(?:\<@[^ ]+\>)|me|everyone/,
+        value : value=>{
+         
+            const regex = /(?:\<@([^ ]+)\>)/;
+            const match = regex.exec(value);
+            
+            if(match){
+                return {member: match[1]};
+            }   
+            return value;
+        }
+    }
     };

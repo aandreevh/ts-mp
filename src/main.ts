@@ -1,43 +1,27 @@
-import {CFG} from "./core/grammar/grammar"
-import {AdvancedCFGBuilder} from './core/grammar/advanced'
-import {CFGContextBuilder,ContextEvaluator} from './core/runtime/builder';
-import {Postprocess} from './core/grammar/processor';
+import {ContextualExecutor} from './executor'
+import { Postprocess } from './core/grammar/processor';
+import { Evaluateable } from './core/runtime/evaluator';
 
-const advancedBuider = new AdvancedCFGBuilder();
-
-advancedBuider.addGrammarFromFile(__dirname+'/grm');
-advancedBuider.lexerBuilder.addIdentityToken();
-
-const builder = new CFGContextBuilder(advancedBuider);
-
-const evaluator : ContextEvaluator = builder.addAllDescription({
-    'S' :{
-      descriptor : 'send ?$Group %string',
-      handler : (u,v) =>[{group: u},{message: v}]
-    },
-    'Group':[
-     
-        {
-            descriptor: '$Group and $Group',
-            handler: (u,v) => u.concat(v)
+const executor : ContextualExecutor = (new ContextualExecutor()).build(
+    {
+        'S' : {
+            descriptor : '%member',
+            handler: (x : number[]) => x.reduce((p,c)=>p+c,0)
         },
-        {
-            descriptor: '$Group or $Group',
-            handler: (u,v) => [u,v]
-        },
-        {
-            descriptor: '+%member',
-            handler: Postprocess.id()
-        },
-        {
-            descriptor: 'not $Group',
-            handler: (u) => ["!",u]
-        },
-    ]
-}).build();
+        'Group': [
+            {
+                descriptor: '$Group and $Group',
+                handler: Postprocess.id()
+            },
+            {
+                descriptor: '+%member',
+                handler: Postprocess.id()
+            }
+        ]
+    }
+);
 
 
-console.log(`${JSON.stringify(advancedBuider.grammarBuilder)}\n`);
 
-console.log(JSON.stringify(evaluator.eval('send @andrey @georgy and @yqavor "hello!"')));
-
+const obj :Evaluateable<number> = executor.evaluate('<@UU>');
+console.log(JSON.stringify(obj));

@@ -1,27 +1,10 @@
 import {FunctionDescriptor,FuncBaseDescription} from './runtime'
 import {AdvancedCFGBuilder} from '../grammar/advanced'
-import {GrammarSymbol,BasicGrammarSymbol,CFG} from '../grammar/grammar';
+import {GrammarSymbol,BasicGrammarSymbol} from '../grammar/grammar';
 import {Postprocess} from '../grammar/processor'
+import {ContextEvaluator} from './evaluator'
 
 
-
-export class ContextEvaluator{
-
-
-    constructor(public cfg :CFG){}
-
-
-    eval(data:string){
-        try{
-            const result = this.cfg.parse(data);
-            return result[0];
-        }catch(e){
-            console.log(JSON.stringify(e));
-        }
-   
-
-    }
-}
 
 export class CFGContextBuilder{
 
@@ -86,7 +69,7 @@ export class CFGContextBuilder{
         .add({name:descriptor.returnType,
             symbols:symbols,
             postprocessor:Postprocess.pipe(   
-                Postprocess.removeOdd(longIndex),
+                Postprocess.removeOdd(longIndex), //for cpaces
                 Postprocess.filter(...mapIndex),
                 Postprocess.valueConvetion(descriptor.handler)
             )});

@@ -1,3 +1,5 @@
+import {Evaluateable} from '../runtime/evaluator'
+
 //Incorrect types definition :(
 export type Postprocessor = (data: any)=> any;
 export type FunctionalPostprocessor = (...data: any)=> any;
@@ -9,8 +11,7 @@ export namespace Postprocess{
     }
 
     export const  log = () : Postprocessor =>(data: any) =>{
-        console.log(JSON.stringify(data));
-        return data;
+       return data;
     }
 
     
@@ -51,10 +52,17 @@ export namespace Postprocess{
     }
 
     export const valueConvetion  = (f : FunctionalPostprocessor) : Postprocessor =>(data: any)=>{
+
+        function mapChildren(x){
+            if(x== null) return null;
+            else if(x instanceof Evaluateable) return new Evaluateable(x.value,x.handler)
+            else return x.value
+        }
        
-        return {value: f(...data.map(x => {
-            return Array.isArray(x) ? x.map(x =>x== null ? null: x.value) :  x== null ? null : x.value;
-        })) };
+        return new Evaluateable(data.map(x => {
+            return Array.isArray(x) ? x.map(mapChildren) :  mapChildren(x);
+        }),f);
+      
     }
     
 
