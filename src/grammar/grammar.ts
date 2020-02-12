@@ -1,24 +1,26 @@
-import {Parser,Grammar,ParserRule} from 'nearley'
+import {Parser,Grammar,ParserRule} from "nearley"
 import {Lexer,Rule as LRule,compile} from 'moo'
-import {Postprocessor,Postprocess} from './processor'
+
+const idn = _=>null;
+const id = x =>x;
+const idi = x=>x[0];
+const idcon = d=>d[0].concat([d[1]]);
+
+export namespace CFG{
 
     export type LexerRule = RegExp | string | string[] | LRule | LRule[];
-    export type LexerDictionary =  {[x:string] : LexerRule};
+
     export class LexerBuilder{
-        private rules : LexerDictionary ={};
+        private rules : {[x:string] : LexerRule} ={};
     
         add(name : string,rule : LexerRule) : LexerBuilder{
             this.rules[name] = rule;
             return this;
         }
-        addAll(arg : LexerDictionary) : LexerBuilder{
+        addAll(arg : {[d:string]: LexerRule}) : LexerBuilder{
             for(let t in arg) this.add(t,arg[t]);   
             return this;
         }
-        addIdentityToken(name: string = 'keyword',regex : RegExp =/[0-9]*[a-zA-Z_'-]+[a-zA-Z0-9_'-]*/) : LexerBuilder{
-            this.add(name,regex);
-            return this;
-        }   
     
         build() : Lexer{
             return compile(this.rules)
@@ -26,52 +28,63 @@ import {Postprocessor,Postprocess} from './processor'
     }
     
     export type BasicGrammarSymbol =RegExp|string | {type: string} | {literal:string};
-    export type AdvancedGrammarSymbol= {tag:string; symbols:GrammarSymbol[]; value?: any}
+    export type AdvancedGrammarSymbol= {tag:string; symbols:[BasicGrammarSymbol|AdvancedGrammarSymbol]; value?: any}
     export type GrammarSymbol = BasicGrammarSymbol|AdvancedGrammarSymbol;
     
-   
+    //Incorrect types definition :(
+    export type Postprocessor = (data: any[], reference: number, wantedBy: {})=> any;
+    
     type GrammarRule = {
      name: string,
      symbols : GrammarSymbol[],
-     postprocessor? : Postprocessor
+     postprocessor : Postprocessor
     }
-
-    export type AdvancedSymbolResolver =  (arg0:ParserRule,arg1 :AdvancedGrammarSymbol) =>void;
-    export type TagResolverRegistry = {[x : string] : AdvancedSymbolResolver};
+    /*
+    if(this.supports(symbol)){
+                switch(symbol.tag){
+                    case '?':
+                        uuid = this.genUniqId();
+                        pr(uuid,[],idn);
+                        pr(uuid,[symbol.symbol],idi);
+                        return [uuid];
+                    break;
+                    
+                    case '+':
+                        uuid = this.genUniqId();
+                        pr(uuid,[uuid,symbol.symbol],idcon);
+                        pr(uuid,[symbol.symbol]);
+                        return [uuid];
+                    break;
+                    case '*':
+                        uuid = this.genUniqId();
+                        pr(uuid,[uuid,symbol.symbol],idcon);
+                        pr(uuid);
+                        return [uuid];
+                    break;
+                }
+            }
+    */
+    export type AdvancedTagResolver =  (arg0:ParserRule,arg1 :AdvancedGrammarSymbol) =>void;
+    export type TagResolverRegistry = {[x : string] : AdvancedTagResolver};
     export const defaultResolverRegistry ={
         '?': function(prule:ParserRule,ptag :AdvancedGrammarSymbol){
             const uuid = this.generateUniqueId();
         
-            this.addRule1(uuid,[],Postprocess.idn());
-            this.add({name:uuid,symbols:ptag.symbols,postprocessor:Postprocess.idi()});
+            this.addRule1(uuid,[],idn);
+            this.add({name:uuid,symbols:ptag.symbols,postprocessor:idi});
             prule.symbols.push(uuid);
         },
 
         '*': function(prule:ParserRule,ptag :AdvancedGrammarSymbol){
             const uuid = this.generateUniqueId();
-         
-            if(ptag.value){ //spacing symbol
-                const uuid2 = this.generateUniqueId();
-                this.addRule1(uuid,[]);
-                this.addRule1(uuid,[uuid2],Postprocess.idi());
-                this.add({name:uuid2,symbols: [uuid,ptag.value,...ptag.symbols],postprocessor: Postprocess.idcon()});
-                this.add({name:uuid2,symbols:ptag.symbols});
-            }else{
-                this.addRule1(uuid,[]);
-                this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: Postprocess.idcon()});
-            }
+            this.addRule1(uuid,[]);
+            this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: idcon});
             prule.symbols.push(uuid);
         },
         '+': function(prule:ParserRule,ptag :AdvancedGrammarSymbol){
             const uuid = this.generateUniqueId();
-            if(ptag.value){ //spacing symbol
-                this.add({name:uuid,symbols: [uuid,ptag.value,...ptag.symbols],postprocessor: Postprocess.idcon()});
-                this.add({name:uuid,symbols:ptag.symbols});
-            }else{
-                this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: Postprocess.idcon()});
-                this.add({name:uuid,symbols:ptag.symbols});
-            }
-            
+            this.add({name:uuid,symbols: [uuid,...ptag.symbols],postprocessor: idcon});
+            this.add({name:uuid,symbols:ptag.symbols});
             prule.symbols.push(uuid);
         }
     }
@@ -97,12 +110,8 @@ import {Postprocessor,Postprocess} from './processor'
         return this;
     } 
 
-    addRuleAll(rules: ParserRule[]){
-        rules.forEach(this.addRule.bind(this));
-    }
-
     addRule1(name:string
-        ,symbols: GrammarSymbol[]=[],postprocess: Postprocessor=Postprocess.id()):GrammarBuilder{
+        ,symbols: GrammarSymbol[]=[],postprocess: Postprocessor=id):GrammarBuilder{
         return this.addRule({name,symbols,postprocess});
     }
 
@@ -110,7 +119,7 @@ import {Postprocessor,Postprocess} from './processor'
         
         let prule :ParserRule = {
             name : rule.name,
-            postprocess : rule.postprocessor || Postprocess.id(),
+            postprocess : rule.postprocessor,
             symbols : []};
 
             for(const sym of rule.symbols){
@@ -136,22 +145,19 @@ import {Postprocessor,Postprocess} from './processor'
     export class CFG{
         private parser : Parser;
     
-        constructor(private lexer: Lexer,private rules:ParserRule[],private start :string){}
-
-        reset():CFG{
+        constructor(lexer: Lexer,rules:ParserRule[],start :string){
             this.parser = new Parser(Grammar.fromCompiled({
-                Lexer : this.lexer,
-                ParserStart : this.start,
-                ParserRules : this.rules
+                Lexer : lexer,
+                ParserStart : start,
+                ParserRules : rules
             }));
-            return this;
         }
     
         
         parse(data : string){
-            this.reset()
-            return this.parser.feed(data).finish();
+            this.parser.feed(data);
+            
+           return this.parser.results;
         }
-
-
     }
+}

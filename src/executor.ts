@@ -6,14 +6,11 @@ import { FuncBaseDescription } from "./core/runtime/runtime";
 
 
 
-export class ContextualExecutor{
-
-    
-    private evaluator : ContextEvaluator;
+export class ContextExecutorBuilder{
 
     constructor(private path :string = '/grm'){ }
 
-    build( definitions : {[arg:string] : FuncBaseDescription | FuncBaseDescription[]}):ContextualExecutor{
+    build( definitions : {[arg:string] : FuncBaseDescription | FuncBaseDescription[]}):ContextExecutor{
         const advancedBuider = new AdvancedCFGBuilder();
         advancedBuider.addGrammarFromFile(__dirname+this.path);
         advancedBuider.lexerBuilder.addIdentityToken();
@@ -21,13 +18,18 @@ export class ContextualExecutor{
         const builder = new CFGContextBuilder(advancedBuider);
         builder.addAllDescription(definitions);
 
-        this.evaluator = builder.build();
-        return this;
+        return new ContextExecutor(builder.build());
     }
 
 
-    evaluate<T>(data : string): Evaluateable<T>{
+}
+
+export class ContextExecutor{
+
+    constructor(private evaluator : ContextEvaluator){}
+
+
+    evaluate<T>(data : string): Evaluateable<T> | Error{
         return this.evaluator.eval<T>(data);
     }
-
 }

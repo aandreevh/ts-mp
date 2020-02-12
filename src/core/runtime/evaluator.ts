@@ -31,12 +31,12 @@ export class ContextEvaluator{
     constructor(public cfg :CFG){}
 
 
-    eval<T>(data:string) : Evaluateable<T>{
+    eval<T>(data:string) : Evaluateable<T>|Error{
         try{
             const result = this.cfg.parse(data);
             return result[0];
         }catch(e){
-            console.log(JSON.stringify(e));
+            return e;
         }
    
 

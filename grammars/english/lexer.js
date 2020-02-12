@@ -1,6 +1,6 @@
 module.exports = {
-    space: / +/,
-    number: {match: /[0-9]+(?:\.[0-9]+)?/, value: s => +s },
+    space: {match: /[\s,]+/, lineBreaks: true},
+    number: {match: /\-?[0-9]+(?:\.[0-9]+)?/, value: s => +s },
     string:  {
         match: /"(?:(?:\\\\)|(?:\\[a-z])|[^"\\]|(?:\\"))*"|'[^']*'/,
         value: s => {
@@ -10,6 +10,7 @@ module.exports = {
                 return JSON.parse(s); 
             }
         }},
+    operator: /[!$%^&*()+|~=`{}\[\]:";<>.?\/]/,
     member: {
         match : /(?:\<@[^ ]+\>)|me|everyone/,
         value : value=>{
@@ -18,9 +19,18 @@ module.exports = {
             const match = regex.exec(value);
             
             if(match){
-                return {member: match[1]};
+                return {id: match[1]};
             }   
             return value;
+        }
+    },
+    channel: {
+        match: /(?:\<#[^\| ]+(?:\|[^ ]+)?\>)/,
+        value: value =>{
+            
+            const regex = /(?:\<#([^\| ]+)\|?([^ ]+)?\>)/
+            const match = regex.exec(value);
+            return {id: match[1], name: match[2] || null};
         }
     }
     };

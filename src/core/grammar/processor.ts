@@ -42,7 +42,7 @@ export namespace Postprocess{
 
         
     export const removeOdd = (indexes) : Postprocessor =>(data : any)=>{
-      
+    
         return data.map((el,index)=>{
             if(indexes.find(x => x==index) !=null){
              
@@ -52,7 +52,6 @@ export namespace Postprocess{
     }
 
     export const valueConvetion  = (f : FunctionalPostprocessor) : Postprocessor =>(data: any)=>{
-
         function mapChildren(x){
             if(x== null) return null;
             else if(x instanceof Evaluateable) return new Evaluateable(x.value,x.handler)

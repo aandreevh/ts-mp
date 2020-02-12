@@ -69,7 +69,7 @@ export class CFGContextBuilder{
         .add({name:descriptor.returnType,
             symbols:symbols,
             postprocessor:Postprocess.pipe(   
-                Postprocess.removeOdd(longIndex), //for cpaces
+                Postprocess.removeOdd(longIndex), //for spaces
                 Postprocess.filter(...mapIndex),
                 Postprocess.valueConvetion(descriptor.handler)
             )});

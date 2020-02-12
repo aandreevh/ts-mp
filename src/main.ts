@@ -1,50 +1,23 @@
-import {ContextualExecutor} from './executor'
-import { Postprocess } from './core/grammar/processor';
+import {ContextExecutor,ContextExecutorBuilder} from './executor'
 import { Evaluateable } from './core/runtime/evaluator';
-import { EventEmitter } from 'events';
 
-let env = {
-    emitter : new EventEmitter(),
-    print : console.log
-}
-
-function ff(environment : any){
-
-
-    return (time : number , task : Evaluateable<string>)=>{
-        
-        setTimeout(()=>{
-            environment.emitter.emit('event');
-        },  time );
-        environment.emitter.on('event',()=>{
-
-            environment.print(task.eval());
-        })
-   
-    }
-}
-
-
-const executor : ContextualExecutor = (new ContextualExecutor()).build(
+const executor : ContextExecutor = (new ContextExecutorBuilder()).build(
     {
         'S' : {
-            descriptor : 'timeout %number $Task',
-            handler: ff(env)
-        },
-        'Task':{
-            descriptor : '%keyword %string',
-            handler: (keyword :string,str:string)=>{
-                if(keyword === 'andrey'){
-                    return "mnoo e lud"
-                }
-
-                return str;
+            descriptor : '$Date',
+            handler: (obj : any)=>{
+                console.log(obj);
+                return obj;
             }
-        },
+        }
     }
 );
 
+const obj :Evaluateable<Date> | Error = executor.evaluate("25th December 1887year at 3:15");
 
-
-const obj :Evaluateable<number> = executor.evaluate('timeout 1500 andrey "hi"');
-console.log(obj.eval(env));
+if(obj instanceof Error){
+    console.log("Error",JSON.stringify(obj));
+    
+}else {
+    (obj as Evaluateable<Date>).eval();
+}
