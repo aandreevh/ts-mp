@@ -10,6 +10,7 @@ lexer.has = function() {return true;}
 
 
 function getNextDayOfTheWeek(dayOfWeek, excludeToday = true, refDate = new Date()) {
+    dayOfWeek++;
     if (dayOfWeek < 0) return;
     refDate.setHours(0,0,0,0);
     refDate.setDate(refDate.getDate() + !!excludeToday + 

@@ -4,7 +4,7 @@ import { Evaluateable } from './core/runtime/evaluator';
 const executor : ContextExecutor = (new ContextExecutorBuilder()).build(
     {
         'S' : {
-            descriptor : '$Date',
+            descriptor : '$Period',
             handler: (obj : any)=>{
                 console.log(JSON.stringify(obj));
                 return obj;
@@ -13,11 +13,11 @@ const executor : ContextExecutor = (new ContextExecutorBuilder()).build(
     }
 );
 
-const obj :Evaluateable<Date> | Error = executor.evaluate("1 week before 2hours and 3 minutes after 3 days before 22 Dec. at 15 o'clock am");
+const obj :Evaluateable<Date> | Error = executor.evaluate("from 1 Jan. to 3th Jan.");
 
-if(obj instanceof Error){
-    console.log("Error",JSON.stringify(obj));
-    
-}else {
+if(obj instanceof Evaluateable){
     (obj as Evaluateable<Date>).eval();
-}
+}else {
+
+    console.log("Error",JSON.stringify(obj));
+ }

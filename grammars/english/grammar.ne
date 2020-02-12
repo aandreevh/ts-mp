@@ -24,9 +24,9 @@ Date0 -> %number ("nd"|"st"|"th"):? %space MonthOfYear (%space %number (%space:?
     | Date2 {%function ([x]){return x;}%}
 Date1 -> Date0 %space Time  {%g.date1%} 
     | Date0 {%function ([x]){return x;}%}
-Date2 -> Period %space ("before"|"after") %space Date  {%g.date22%}
-Date2 -> "after" %space Period {%g.date21%}
-Date2 -> Period %space "ago" {%g.date20%}
+Date2 -> Duration %space ("before"|"after") %space Date  {%g.date22%}
+Date2 -> "after" %space Duration {%g.date21%}
+Date2 -> Duration %space "ago" {%g.date20%}
 Date ->  Date1 {%function ([x]){return {value:x};}%} 
     | "the" %space "day" %space ("after"|"before") %space Date1 {%g.date%} 
     | "now"  {%function(x){return {value:new Date()} ;}%}
@@ -34,7 +34,10 @@ Date ->  Date1 {%function ([x]){return {value:x};}%}
 TimeUnit -> ("minute"|"hour"|"day"|"week"|"month"|"year")  {%function([[x]]){return x.value}%}
     | ("minutes"|"hours"|"days"|"weeks"|"months"|"years")  {%function([[x]]){return x.value.slice(0,-1)}%}
 
-Period -> Period1 {%function([x]) {return {value:x};}%}
-Period1 -> Period2 (%space "and" %space):? Period1 {%function([x,,y]){return x.concat(y)}%} | Period2 {%function([[...x]]) {return x;}%}
-Period2 -> Period2 %space Period3 {%function ([arr,,cur]) {return [...arr,cur]}%} | Period3
-Period3 -> %number %space:? TimeUnit {%function ([u,,v]){return [u.value,v]}%}
+Duration -> Duration1 {%function([x]) {return {value:x};}%}
+Duration1 -> Duration2 (%space "and" %space):? Duration1 {%function([x,,y]){return x.concat(y)}%} | Duration2 {%function([[...x]]) {return x;}%}
+Duration2 -> Duration2 %space Duration3 {%function ([arr,,cur]) {return [...arr,cur]}%} | Duration3
+Duration3 -> %number %space:? TimeUnit {%function ([u,,v]){return [u.value,v]}%}
+
+Period -> "from" %space Date {%function ([,,d]){return {value:{start:d.value,end:(new Date())}}}%}
+    | "from" %space Date %space "to" %space Date {%function ([,,d1,,,,d2]){return {value:{start:d1.value,end:d2.value}}}%}
