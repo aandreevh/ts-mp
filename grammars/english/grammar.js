@@ -8,7 +8,6 @@ function id(x) { return x[0]; }
 var grammar = {
     Lexer: lexer,
     ParserRules: [
-    {"name": "Date", "symbols": [(lexer.has("number") ? {type: "number"} : number)]},
     {"name": "TimeQ$ebnf$1$subexpression$1", "symbols": [{"literal":"o'clock"}, (lexer.has("space") ? {type: "space"} : space)]},
     {"name": "TimeQ$ebnf$1", "symbols": ["TimeQ$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "TimeQ$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
@@ -126,14 +125,46 @@ var grammar = {
     {"name": "Date0", "symbols": ["Date0$subexpression$1", (lexer.has("space") ? {type: "space"} : space), "Date0$subexpression$2"], "postprocess": g.date01},
     {"name": "Date0", "symbols": ["RelativeDay"], "postprocess": g.date00},
     {"name": "Date0", "symbols": [(lexer.has("string") ? {type: "string"} : string)], "postprocess": function ([x]){return new Date(x);}},
+    {"name": "Date0", "symbols": ["Date2"], "postprocess": function ([x]){return x;}},
     {"name": "Date1", "symbols": ["Date0", (lexer.has("space") ? {type: "space"} : space), "Time"], "postprocess": g.date1},
     {"name": "Date1", "symbols": ["Date0"], "postprocess": function ([x]){return x;}},
+    {"name": "Date2$subexpression$1", "symbols": [{"literal":"before"}]},
+    {"name": "Date2$subexpression$1", "symbols": [{"literal":"after"}]},
+    {"name": "Date2", "symbols": ["Period", (lexer.has("space") ? {type: "space"} : space), "Date2$subexpression$1", (lexer.has("space") ? {type: "space"} : space), "Date"], "postprocess": g.date22},
+    {"name": "Date2", "symbols": [{"literal":"after"}, (lexer.has("space") ? {type: "space"} : space), "Period"], "postprocess": g.date21},
+    {"name": "Date2", "symbols": ["Period", (lexer.has("space") ? {type: "space"} : space), {"literal":"ago"}], "postprocess": g.date20},
     {"name": "Date", "symbols": ["Date1"], "postprocess": function ([x]){return {value:x};}},
     {"name": "Date$subexpression$1", "symbols": [{"literal":"after"}]},
     {"name": "Date$subexpression$1", "symbols": [{"literal":"before"}]},
-    {"name": "Date", "symbols": [{"literal":"the"}, (lexer.has("space") ? {type: "space"} : space), {"literal":"day"}, (lexer.has("space") ? {type: "space"} : space), "Date$subexpression$1", (lexer.has("space") ? {type: "space"} : space), "Date1"], "postprocess": g.date}
+    {"name": "Date", "symbols": [{"literal":"the"}, (lexer.has("space") ? {type: "space"} : space), {"literal":"day"}, (lexer.has("space") ? {type: "space"} : space), "Date$subexpression$1", (lexer.has("space") ? {type: "space"} : space), "Date1"], "postprocess": g.date},
+    {"name": "Date", "symbols": [{"literal":"now"}], "postprocess": function(x){return {value:new Date()} ;}},
+    {"name": "TimeUnit$subexpression$1", "symbols": [{"literal":"minute"}]},
+    {"name": "TimeUnit$subexpression$1", "symbols": [{"literal":"hour"}]},
+    {"name": "TimeUnit$subexpression$1", "symbols": [{"literal":"day"}]},
+    {"name": "TimeUnit$subexpression$1", "symbols": [{"literal":"week"}]},
+    {"name": "TimeUnit$subexpression$1", "symbols": [{"literal":"month"}]},
+    {"name": "TimeUnit$subexpression$1", "symbols": [{"literal":"year"}]},
+    {"name": "TimeUnit", "symbols": ["TimeUnit$subexpression$1"], "postprocess": function([[x]]){return x.value}},
+    {"name": "TimeUnit$subexpression$2", "symbols": [{"literal":"minutes"}]},
+    {"name": "TimeUnit$subexpression$2", "symbols": [{"literal":"hours"}]},
+    {"name": "TimeUnit$subexpression$2", "symbols": [{"literal":"days"}]},
+    {"name": "TimeUnit$subexpression$2", "symbols": [{"literal":"weeks"}]},
+    {"name": "TimeUnit$subexpression$2", "symbols": [{"literal":"months"}]},
+    {"name": "TimeUnit$subexpression$2", "symbols": [{"literal":"years"}]},
+    {"name": "TimeUnit", "symbols": ["TimeUnit$subexpression$2"], "postprocess": function([[x]]){return x.value.slice(0,-1)}},
+    {"name": "Period", "symbols": ["Period1"], "postprocess": function([x]) {return {value:x};}},
+    {"name": "Period1$ebnf$1$subexpression$1", "symbols": [(lexer.has("space") ? {type: "space"} : space), {"literal":"and"}, (lexer.has("space") ? {type: "space"} : space)]},
+    {"name": "Period1$ebnf$1", "symbols": ["Period1$ebnf$1$subexpression$1"], "postprocess": id},
+    {"name": "Period1$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+    {"name": "Period1", "symbols": ["Period2", "Period1$ebnf$1", "Period1"], "postprocess": function([x,,y]){return x.concat(y)}},
+    {"name": "Period1", "symbols": ["Period2"], "postprocess": function([[...x]]) {return x;}},
+    {"name": "Period2", "symbols": ["Period2", (lexer.has("space") ? {type: "space"} : space), "Period3"], "postprocess": function ([arr,,cur]) {return [...arr,cur]}},
+    {"name": "Period2", "symbols": ["Period3"]},
+    {"name": "Period3$ebnf$1", "symbols": [(lexer.has("space") ? {type: "space"} : space)], "postprocess": id},
+    {"name": "Period3$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
+    {"name": "Period3", "symbols": [(lexer.has("number") ? {type: "number"} : number), "Period3$ebnf$1", "TimeUnit"], "postprocess": function ([u,,v]){return [u.value,v]}}
 ]
-  , ParserStart: "Date"
+  , ParserStart: "TimeQ"
 }
 if (typeof module !== 'undefined'&& typeof module.exports !== 'undefined') {
    module.exports = grammar;

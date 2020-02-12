@@ -18,7 +18,41 @@ function getNextDayOfTheWeek(dayOfWeek, excludeToday = true, refDate = new Date(
 }
 
 function addYear(date,val){
-date.setFullYear(date.getYear()+val,date.getMonth(),date.getDate());
+date.setFullYear(date.getFullYear()+val,date.getMonth(),date.getDate());
+}
+
+function datePeriod(date,period,sign){
+    date = new Date(date);
+for(const [val,unit] of period){
+    switch(unit){
+        case 'minute':
+            date.setMinutes(date.getMinutes()+sign*val);
+            break;
+
+        case 'hour':
+                date.setHours(date.getHours()+sign*val);
+                break;
+
+        case 'day':
+                date.setDate(date.getDate()+sign*val);
+                break;
+
+        case 'week':
+
+                date.setDate(date.getDate()+sign*val*7);
+                break;
+
+        case 'month':
+                date.setMonth(date.getMonth()+sign*val);
+                break;
+
+        case 'year':
+            addYear(date,val*sign);
+                break;
+    }
+}
+
+return date;
 }
 
 
@@ -43,6 +77,7 @@ module.exports= {
         return {value: b};
     },
     date1: function([d,,t]){
+        d= new Date(d);
         d.setHours(t.value.h);
         d.setMinutes(t.value.m);
         d.setSeconds(0);
@@ -98,12 +133,27 @@ module.exports= {
     },
     date04: function([a,,,b,c]){
         const date = new Date();
-        date.setFullYear(date.getYear(),b,a.value);
+        date.setFullYear(date.getFullYear(),b,a.value);
         
         return date;
     },
     date : function([,,,,[v],,d]){
-        d.setDate(d.getDate() + (v == 'after'? 1 : -1))
+        d= new Date(d);
+        d.setDate(d.getDate() + (v == 'after'? 1 : -1));
         return {value: d}
-    }
+    },
+    date20:function([x,,]){
+       return datePeriod(new Date(),x.value,-1);
+    },
+    date21:function([,,x]){
+        return datePeriod(new Date(),x.value,1);    
+    },
+    date22:function([a,,[b],,c]){
+  
+        let mul=1;
+        if(b.value == 'before') mul *=-1;
+        
+        return datePeriod(c.value,a.value,mul);   
+    
+}
 }

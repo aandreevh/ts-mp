@@ -6,14 +6,14 @@ const executor : ContextExecutor = (new ContextExecutorBuilder()).build(
         'S' : {
             descriptor : '$Date',
             handler: (obj : any)=>{
-                console.log(obj);
+                console.log(JSON.stringify(obj));
                 return obj;
             }
         }
     }
 );
 
-const obj :Evaluateable<Date> | Error = executor.evaluate("25th December 1887year at 3:15");
+const obj :Evaluateable<Date> | Error = executor.evaluate("1 week before 2hours and 3 minutes after 3 days before 22 Dec. at 15 o'clock am");
 
 if(obj instanceof Error){
     console.log("Error",JSON.stringify(obj));

@@ -17,7 +17,8 @@ export class ContextExecutorBuilder{
 
         const builder = new CFGContextBuilder(advancedBuider);
         builder.addAllDescription(definitions);
-
+        console.log(JSON.stringify(builder.cfgBuilder.grammarBuilder.build().length));
+        
         return new ContextExecutor(builder.build());
     }
 
