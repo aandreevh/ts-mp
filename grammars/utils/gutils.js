@@ -4,7 +4,7 @@ var id = () => data => {
 
 
 var log = () =>  (data)=> {
-    console.log(JSON.stringify(data))
+
     return data;
 };
 

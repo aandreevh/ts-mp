@@ -10,7 +10,6 @@ module.exports = {
                 return JSON.parse(s); 
             }
         }},
-    operator: /[!$%^&*()+|~=`{}\[\]:";<>.?\/]/,
     member: {
         match : /(?:\<@[^ ]+\>)|me|everyone/,
         value : value=>{
@@ -32,5 +31,7 @@ module.exports = {
             const match = regex.exec(value);
             return {id: match[1], name: match[2] || null};
         }
-    }
+    },
+    operator: /[!$%^&*()+|~=`{}\[\]:";<>.?\/]/,
+  
     };

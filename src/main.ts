@@ -1,50 +1,11 @@
-import {ContextExecutor,ContextExecutorBuilder} from './lang/executor'
-import { Postprocess } from './lang/core/grammar/processor';
-import { Evaluateable } from './lang/core/runtime/evaluator';
-import { EventEmitter } from 'events';
-
-let env = {
-    emitter : new EventEmitter(),
-    print : console.log
-}
-
-function ff(environment : any){
+import {Server} from './chatbot/server';
+require('dotenv').config();
 
 
-    return (time : number , task : Evaluateable<string>)=>{
-        
-        setTimeout(()=>{
-            environment.emitter.emit('event');
-        },  time );
-        environment.emitter.on('event',()=>{
+const server = new Server({
+    secret:  process.env.SIGNING_SECRET,
+    token:   process.env.BOT_TOKEN,
+    port:    process.env.PORT
+});
 
-            environment.print(task.eval());
-        })
-   
-    }
-}
-
-
-const executor : ContextExecutor = (new ContextExecutorBuilder()).build(
-    {
-        'S' : {
-            descriptor : 'timeout %number $Task',
-            handler: ff(env)
-        },
-        'Task':{
-            descriptor : '%keyword %string',
-            handler: (keyword :string,str:string)=>{
-                if(keyword === 'andrey'){
-                    return "mnoo e lud"
-                }
-
-                return str;
-            }
-        },
-    }
-);
-
-
-
-const obj :any = executor.evaluate('timeout 1500 andrey "hi"');
-console.log(obj.eval(env));
+server.start();
