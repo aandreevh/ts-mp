@@ -8,7 +8,7 @@ import { FuncBaseDescription } from "./core/runtime/runtime";
 
 export class ContextExecutorBuilder{
 
-    constructor(private path :string = '/grm'){ }
+    constructor(private path :string = '/../grm'){ }
 
     build( definitions : {[arg:string] : FuncBaseDescription | FuncBaseDescription[]}):ContextExecutor{
         const advancedBuider = new AdvancedCFGBuilder();
